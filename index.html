@@ -1,12 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Node JS</title>
+    <title>Buscar Usuarios</title>
 </head>
 <body>
-    <h1>Estamos renderizando una HTML</h1>
-    <h1></h1>
+    <h1>Buscar Usuarios</h1>
+    
+    <!-- Campo de búsqueda -->
+    <input type="text" id="searchInput" placeholder="Buscar usuario por nombre">
+    <button onclick="buscarUsuario()">Buscar</button>
+
+    <!-- Tabla de resultados -->
+    <table border="1" id="resultTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Función para buscar usuario
+        async function buscarUsuario() {
+            const nombre = document.getElementById('searchInput').value;
+            const tableBody = document.getElementById('resultTable').querySelector('tbody');
+
+            // Limpiar resultados anteriores
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch(`/usuarios/${nombre}`);
+                if (response.ok) {
+                    const usuario = await response.json();
+                    
+                    // Mostrar usuario en la tabla
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${usuario.id}</td>
+                        <td>${usuario.nombre}</td>
+                        <td>${usuario.email}</td>
+                    `;
+                    tableBody.appendChild(row);
+                } else {
+                    // Mensaje si el usuario no existe
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="3">Usuario no encontrado</td>`;
+                    tableBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Error al buscar usuario:', error);
+            }
+        }
+    </script>
 </body>
 </html>
